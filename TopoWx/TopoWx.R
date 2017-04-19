@@ -1,9 +1,11 @@
-#working with the climo data from TopoWx
+##script is designed to extract min and max monthly temperature data from TopoWx (http://www.scrimhub.org/resources/topowx/) by a watershed boundary, as defined by a separate shapefile, and to save this into a csv for each watershed by month (columns) and year (rows)
+##designed to work with TopoWx data downloaded to a local drive.  defined as 'homeDir'
+##watershed shapefiles also need to be saved locally.  defined as 'boundaries'
 library(sp)
 library(raster)
 library(rgeos)
 #attempt to run this through the Toshiba external hard drive crashed with Pit R watershed so switched to desktop 
-mainDir <- 'E:/TopoWx'
+#mainDir <- 'E:/TopoWx'
 homeDir <- 'C:\\Users\\smdevine\\Desktop\\Forest dieoff and hydrology\\TopoWx'
 setwd(homeDir)
 results <- 'results_TMIN'
