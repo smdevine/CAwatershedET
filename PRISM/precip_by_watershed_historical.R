@@ -63,7 +63,7 @@ HUC_precip <- function(shapefile, HUC_name, HUC_alias) {
       PRISM_monthly[i, j] <- tot_precip_mo
     }
   }
-  print(paste(areaPolygon(temp_name)/4046.86, HUC_alias)) #this is acres 
+  print(paste(areaPolygon(temp_name)/4046.86, HUC_alias)) #print out watershed acres 
   names(PRISM_monthly) <- c("water year", "Oct", "Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep")
   setwd(outpath)
   write.csv(PRISM_monthly, paste(HUC_name, HUC_alias, '_MO_precip.csv', sep=''), row.names=FALSE)
