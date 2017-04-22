@@ -1,5 +1,5 @@
 # CAwatersheds
-## R tools for putting open source, California water resource spatial data into a common framework (.csv and raster bricks) for analysis 
+## R tools for putting open source, California water resource spatial data into a common framework (.csv and raster bricks) for statistical analysis and hydrologic modeling 
 
 Processing data from these open-sources:
 1. TopoWx http://www.scrimhub.org/resources/topowx/
@@ -9,6 +9,6 @@ Processing data from these open-sources:
 5. FRAP-FVEG http://frap.fire.ca.gov/data/frapgisdata-sw-fveg_download
 6. DEMs  
 
-Purpose
-These scripts are specific to my dissertation research at UC Davis, but feel free to use at your own discretion.   At this stage, you will have to download the data locally on to your own machines 
-and modify the directory definitions at the beginning of each script.  Depending on the script, they will automatically create results directories and results.
+Purpose: These R scripts are specific to my dissertation research at UC Davis, but feel free to use them at your own discretion.   At this stage, you will have to download the data locally 
+on to your own machines and modify the directory definitions at the beginning of each script.  Depending on the script, they will automatically generate results directories and results when
+executed.
