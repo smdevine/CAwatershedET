@@ -1,4 +1,5 @@
 #analysis of station temperature data from major California water supply watersheds
+#input data came from https://www.ncdc.noaa.gov/cdo-web/search?datasetid=GHCND with queries by done by "Hydrologic Cataloging Units" to help select only those stations of interest to this study
 #input data are organized by watershed.  outputs organized by variable and timeperiod and include both csv files and shapefiles summarizing the results by station for different time periods
 #intensive QC checks included
 #metadata still needs to be updated via detailed notes from notebook
