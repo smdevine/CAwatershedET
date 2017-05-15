@@ -1,4 +1,5 @@
 #this R script is designed to process a set of monthly PRISM precipitation files relative to a watershed boundary (as defined by a shapefile), so as to produce a matrix of mean precipitation values by month (columns) and water year (rows) for that watershed
+#there is an R library called PRISM that could also be used to download data, among other things
 library(sp)
 library(raster)
 library(rgeos)
