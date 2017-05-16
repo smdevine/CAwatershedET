@@ -1,3 +1,4 @@
+#sf package in r
 library(raster)
 library(Kendall)
 prism_historical <- 'D:/PRISM_ppt_stable_4kmM2_189501_198012_bil'
@@ -88,9 +89,9 @@ for (i in 2:length(watershed_fnames)) {
   write.csv(watershed_P_vs_elev, paste(watershed_name, '_P_vs_elev.csv', sep=''), row.names = FALSE)
 }
 
-#read in p vs. elev files
+#read in p vs. elev files to calculate mean precip by year x watershed and orographic effect by year x watershed
 setwd(P_vs_elevDir)
-p_vs_elev_fnames <- list.files()
+p_vs_elev_fnames <- list.files(pattern = glob2rx('*.csv'))
 p_vs_elev <- lapply(p_vs_elev_fnames, read.csv, stringsAsFactors=FALSE)
 p_vs_elev_fnames <- as.data.frame(p_vs_elev_fnames)
 colnames(p_vs_elev_fnames) <- 'filenames'
@@ -98,6 +99,23 @@ p_vs_elev_fnames$watershed_name <- gsub('_P_vs_elev.csv', '', p_vs_elev_fnames$f
 rivernames <- read.csv(rivername_converter, stringsAsFactors = FALSE)
 p_vs_elev_fnames <- merge(p_vs_elev_fnames, rivernames, by='watershed_name')
 names(p_vs_elev) <- p_vs_elev_fnames$river_name
+#calcuate mean P by water year x watershed
+for (i in 1:length(p_vs_elev)) {
+  if (i == 1) {
+    meanPrecip <- as.matrix(apply(p_vs_elev[[i]][ ,3:ncol(p_vs_elev[[i]])], 2, mean))
+    colnames(meanPrecip)[i] <- names(p_vs_elev)[i]
+    next
+  }
+  meanPrecip <- cbind(meanPrecip, apply(p_vs_elev[[i]][ ,3:ncol(p_vs_elev[[i]])], 2, mean))
+  colnames(meanPrecip)[i] <- names(p_vs_elev)[i]
+}
+meanPrecip <- as.data.frame(meanPrecip) #convert to a data.frame
+meanPrecip$water.year <- as.integer(gsub("WY.", "", row.names(meanPrecip))) #create a water.year column
+meanPrecip <- meanPrecip[ ,c(21, 1:20)] #put water.year into the first column
+setwd(file.path(P_vs_elevDir, 'orographic_trends'))
+write.csv(meanPrecip, 'meanPrecip1896_2015bywatershed.csv', row.names = FALSE)
+
+#calculate orographic effect by water year x watershed and get results into one data.frame
 for (i in 1:length(p_vs_elev)) {
   #rivername <- names(p_vs_elev)[i]
   if (i == 1) {
@@ -141,6 +159,28 @@ mktest_1980_2016 <- apply(slopes_P_vs_elev[which(slopes_P_vs_elev$water.year==19
 mktest_1970_2010 <- apply(slopes_P_vs_elev[which(slopes_P_vs_elev$water.year==1970):which(slopes_P_vs_elev$water.year==2010), 2:21], 2, MannKendall)
 mktest_1950_2010 <- apply(slopes_P_vs_elev[which(slopes_P_vs_elev$water.year==1950):which(slopes_P_vs_elev$water.year==2010), 2:21], 2, MannKendall)
 mktest_1920_2010 <- apply(slopes_P_vs_elev[which(slopes_P_vs_elev$water.year==1920):which(slopes_P_vs_elev$water.year==2010), 2:21], 2, MannKendall)
+
+#plot the orographic effect trends
+for (i in 1:20) {
+  lm_model <- lm(slopes_P_vs_elev[ ,i+1] ~ slopes_P_vs_elev$water.year)
+  lm_model1920 <- lm(slopes_P_vs_elev[which(slopes_P_vs_elev$water.year==1920):nrow(slopes_P_vs_elev),i+1] ~  slopes_P_vs_elev$water.year[which(slopes_P_vs_elev$water.year==1920):nrow(slopes_P_vs_elev)])
+  print(colnames(slopes_P_vs_elev)[i+1])
+  print(summary(lm_model))
+  print(MannKendall(slopes_P_vs_elev[ ,i+1]))
+  plot(slopes_P_vs_elev[ ,i+1] ~ slopes_P_vs_elev$water.year, type='b', main=colnames(slopes_P_vs_elev)[i+1], xlab = 'Water Year', ylab='Orographic Effect (delta mm Precip / m elevation)')
+  abline(lm_model, lty='dashed', col='blue', lwd=2)
+  abline(lm_model1920, lty='dashed', col='red', lwd=2)
+  #legend()
+}
+
+#compare mean P and orographic effects by watershed
+for (i in 1:20) {
+  meanP_vs_orographic <- lm(meanPrecip[ ,i+1] ~ slopes_P_vs_elev[ ,i+1])
+  plot(meanPrecip[ ,i+1] ~ slopes_P_vs_elev[ ,i+1], ylab='Total Precip by Water Year (mm)', xlab='Orographic Effect by Water Year (mm Precip/m elevation)', type='p', main=colnames(meanPrecip)[i+1])
+  abline(meanP_vs_orographic, lty='dashed', col='blue', lwd=2)
+}
+
+
 
 #test watershed plotting on PRISM data
 setwd(boundariesDIR)
